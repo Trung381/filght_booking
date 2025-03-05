@@ -81,7 +81,7 @@ public class FlightController {
             @RequestParam(required = false) String airlineName) {
         LocalDateTime startDateTime = departureTimeStart != null ? LocalDateTime.parse(departureTimeStart) : null;
         LocalDateTime endDateTime = departureTimeEnd != null ? LocalDateTime.parse(departureTimeEnd) : null;
-        List<FlightTicketDTO> tickets = flightRepository.searchFlightTickets(
+        return flightRepository.searchFlightTickets(
             departureAirport, 
             arrivalAirport,
             startDateTime,
@@ -89,16 +89,6 @@ public class FlightController {
             status,
             airlineName
         );
-        
-        // Set default pricing for each flight
-        for (FlightTicketDTO ticket : tickets) {
-            ticket.setEconomyPrice(new BigDecimal("299.99"));
-            ticket.setBusinessPrice(new BigDecimal("899.99"));
-            ticket.setFirstClassPrice(new BigDecimal("1499.99"));
-            ticket.setAvailableSeats(180); // Default available seats
-        }
-        
-        return tickets;
     }
 
     // Admin only endpoints

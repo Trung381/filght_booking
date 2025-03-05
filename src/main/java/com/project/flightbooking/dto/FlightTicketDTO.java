@@ -1,13 +1,13 @@
 package com.project.flightbooking.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
+@NoArgsConstructor
 public class FlightTicketDTO {
     private Long flightId;
     private String flightNumber;
@@ -26,7 +26,8 @@ public class FlightTicketDTO {
     public FlightTicketDTO(Long flightId, String flightNumber, String airlineName, 
                           String departureAirport, String arrivalAirport, 
                           LocalDateTime departureTime, LocalDateTime arrivalTime, 
-                          String status) {
+                          String status, BigDecimal economyPrice, BigDecimal businessPrice,
+                          BigDecimal firstClassPrice, Integer availableSeats) {
         this.flightId = flightId;
         this.flightNumber = flightNumber;
         this.airlineName = airlineName;
@@ -35,6 +36,9 @@ public class FlightTicketDTO {
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
         this.status = status;
-        
+        this.economyPrice = economyPrice;
+        this.businessPrice = businessPrice;
+        this.firstClassPrice = firstClassPrice;
+        this.availableSeats = availableSeats;
     }
 }

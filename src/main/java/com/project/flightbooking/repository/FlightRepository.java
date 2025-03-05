@@ -34,7 +34,8 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
 
     @Query("SELECT NEW com.project.flightbooking.dto.FlightTicketDTO(" +
            "f.flightId, f.flightNumber, a.name, f.departureAirport, " +
-           "f.arrivalAirport, f.departureTime, f.arrivalTime, f.status) " +
+           "f.arrivalAirport, f.departureTime, f.arrivalTime, f.status, " +
+           "f.economyPrice, f.businessPrice, f.firstClassPrice, f.availableSeats) " +
            "FROM Flight f " +
            "JOIN f.airline a " +
            "WHERE (:departureAirport IS NULL OR f.departureAirport = :departureAirport) AND " +
