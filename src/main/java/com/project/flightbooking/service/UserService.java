@@ -1,5 +1,6 @@
 package com.project.flightbooking.service;
 
+import com.project.flightbooking.dto.UserDTO;
 import com.project.flightbooking.entity.User;
 import com.project.flightbooking.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,5 +50,36 @@ public class UserService {
     public void deleteUser(Long id) {
         User user = getUserById(id);
         userRepository.delete(user);
+    }
+
+    public User updateProfile(Long userId, UserDTO updateRequest) {
+        User user = getUserById(userId);
+        
+        // Only update allowed fields
+        if (updateRequest.getEmail() != null) {
+            user.setEmail(updateRequest.getEmail());
+        }
+        if (updateRequest.getPhoneNumber() != null) {
+            user.setPhoneNumber(updateRequest.getPhoneNumber());
+        }
+        if (updateRequest.getInitialAirport() != null) {
+            user.setInitialAirport(updateRequest.getInitialAirport());
+        }
+        
+        return userRepository.save(user);
+    }
+
+    public void changePassword(Long userId, String currentPassword, String newPassword) {
+        User user = getUserById(userId);
+        
+        // Verify current password
+        if (!passwordEncoder.matches(currentPassword, user.getPasswordHash())) {
+            throw new RuntimeException("Current password is incorrect");
+        }
+        
+        // Update to new password
+        String newHashedPassword = passwordEncoder.encode(newPassword);
+        user.setPasswordHash(newHashedPassword);
+        userRepository.save(user);
     }
 } 

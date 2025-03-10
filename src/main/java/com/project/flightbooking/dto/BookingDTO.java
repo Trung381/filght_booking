@@ -8,7 +8,9 @@ import java.time.LocalDateTime;
 @Data
 public class BookingDTO {
     private Long bookingId;
-    private FlightTicketDTO flight;
+    private String flightNumber;
+    private String departureAirport;
+    private String arrivalAirport;
     private LocalDateTime bookingDate;
     private String status;
     private BigDecimal totalPrice;

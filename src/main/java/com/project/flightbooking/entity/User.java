@@ -3,6 +3,7 @@ package com.project.flightbooking.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.List;
 import java.util.Objects;
@@ -10,7 +11,7 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "bookings")
 @RequiredArgsConstructor
 @Table(name = "users")
 public class User {
@@ -23,8 +24,9 @@ public class User {
     private String phoneNumber;
     private String role;
     private String initialAirport;
+    
     @OneToMany(mappedBy = "user")
-    @ToString.Exclude
+    @JsonManagedReference
     private List<Booking> bookings;
 
     public Long getUserId() {
