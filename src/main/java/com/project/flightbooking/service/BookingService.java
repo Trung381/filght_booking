@@ -22,6 +22,9 @@ public class BookingService {
     @Autowired
     private BookingRepository bookingRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     public Booking createBooking(String username, Long flightId, String seatClass) {
         User user = userService.findByUsername(username);
         Flight flight = flightService.getFlightById(flightId);
@@ -59,6 +62,11 @@ public class BookingService {
         
         booking.setPaymentStatus("PAID");
         booking.setStatus("CONFIRMED");
-        return bookingRepository.save(booking);
+        Booking confirmedBooking = bookingRepository.save(booking);
+        
+        // Send confirmation email
+        emailService.sendBookingConfirmation(user, confirmedBooking);
+        
+        return confirmedBooking;
     }
 }
