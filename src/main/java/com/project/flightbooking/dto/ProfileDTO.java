@@ -12,5 +12,6 @@ public class ProfileDTO {
     private String email;
     private String phoneNumber;
     private String initialAirport;
+    private String role;
     private List<BookingDTO> bookings;
 } 

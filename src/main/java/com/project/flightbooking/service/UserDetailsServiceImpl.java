@@ -7,8 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import java.util.Collections;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -22,7 +22,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPasswordHash(),
-                new ArrayList<>());
+        
+        // Check if user is inactive
+        if ("INACTIVE".equals(user.getStatus())) {
+            throw new UsernameNotFoundException("User account is inactive: " + username);
+        }
+        
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + user.getRole().toUpperCase());
+        return new org.springframework.security.core.userdetails.User(
+            user.getUsername(), 
+            user.getPasswordHash(),
+            Collections.singleton(authority)
+        );
     }
 } 

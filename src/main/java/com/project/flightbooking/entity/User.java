@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.ArrayList;
 
 @Entity
 @Getter
@@ -25,12 +26,23 @@ public class User {
     private String role;
     private String initialAirport;
     
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @JsonManagedReference
-    private List<Booking> bookings;
+    private List<Booking> bookings = new ArrayList<>();
+
+    @Column(nullable = false)
+    private String status = "ACTIVE"; // Default value
 
     public Long getUserId() {
         return userId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override

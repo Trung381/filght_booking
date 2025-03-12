@@ -6,11 +6,14 @@ import com.project.flightbooking.entity.User;
 import com.project.flightbooking.service.UserService;
 import com.project.flightbooking.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -35,16 +38,24 @@ public class AuthController {
     }
 
     @PostMapping("/authenticate")
-    public AuthResponse createAuthenticationToken(@RequestBody LoginRequest loginRequest) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest loginRequest) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         } catch (AuthenticationException e) {
-            throw new Exception("Incorrect username or password", e);
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new AuthResponse("Authentication failed: " + e.getMessage(), null));
         }
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getUsername());
-        final String token = jwtTokenUtil.generateToken(userDetails);
-        return new AuthResponse("Login successful", token);
+        try {
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getUsername());
+            final String token = jwtTokenUtil.generateToken(userDetails);
+            return ResponseEntity.ok(new AuthResponse("Login successful", token));
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new AuthResponse(e.getMessage(), null));
+        }
     }
 } 

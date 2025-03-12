@@ -12,9 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/users")
@@ -44,6 +46,20 @@ public class UserController {
         dto.setPhoneNumber(user.getPhoneNumber());
         dto.setRole(user.getRole());
         dto.setInitialAirport(user.getInitialAirport());
+        dto.setStatus(user.getStatus());
+        
+        // Safely handle bookings
+        if (user.getBookings() != null) {
+            List<BookingDTO> bookingDTOs = new ArrayList<>();
+            for (Booking booking : user.getBookings()) {
+                try {
+                    bookingDTOs.add(convertToBookingDTO(booking));
+                } catch (Exception e) {
+                    continue;
+                }
+            }
+            dto.setBookings(bookingDTOs);
+        }
         return dto;
     }
 

@@ -25,6 +25,10 @@ public class UserService {
         // Hash the password before saving
         String hashedPassword = passwordEncoder.encode(user.getPasswordHash());
         user.setPasswordHash(hashedPassword);
+        // Set default role if not provided
+        if (user.getRole() == null || user.getRole().isEmpty()) {
+            user.setRole("USER");
+        }
         return userRepository.save(user);
     }
 
@@ -44,12 +48,14 @@ public class UserService {
         user.setPhoneNumber(userDetails.getPhoneNumber());
         user.setRole(userDetails.getRole());
         user.setInitialAirport(userDetails.getInitialAirport());
+        user.setStatus(userDetails.getStatus());
         return userRepository.save(user);
     }
 
     public void deleteUser(Long id) {
         User user = getUserById(id);
-        userRepository.delete(user);
+        user.setStatus("INACTIVE");
+        userRepository.save(user);
     }
 
     public User updateProfile(Long userId, UserDTO updateRequest) {

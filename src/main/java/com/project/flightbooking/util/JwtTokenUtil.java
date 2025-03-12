@@ -5,6 +5,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.security.core.GrantedAuthority;
+import java.util.stream.Collectors;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -39,6 +41,11 @@ public class JwtTokenUtil {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        String role = userDetails.getAuthorities().stream()
+                .findFirst()
+                .map(GrantedAuthority::getAuthority)
+                .orElse("ROLE_USER");
+        claims.put("role", role.replace("ROLE_", "")); // Remove the ROLE_ prefix
         return createToken(claims, userDetails.getUsername());
     }
 
